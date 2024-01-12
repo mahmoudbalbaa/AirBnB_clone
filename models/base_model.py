@@ -23,9 +23,9 @@ class BaseModel:
                     setattr(self, key, datetime.strptime(value, time_format))
                 else:
                     setattr(self, key, value)
-
+        """
         models.storage.new(self)
-
+        """
     def save(self):
         """
         this is save method
@@ -43,5 +43,8 @@ class BaseModel:
         return inst_dict
 
     def __str__(self):
+        """
+
+        """
         class_name = self.__class__.__name__
         return "[{}] ({}) {}".format(class_name, self.id, self.__dict__)
