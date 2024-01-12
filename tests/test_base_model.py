@@ -33,6 +33,6 @@ class TestBaseModel(unittest.TestCase):
         self.assertIn('BaseModel', str_representation)
         self.assertIn(self.my_model.id, str_representation)
 
+
 if __name__ == '__main__':
     unittest.main()
-
