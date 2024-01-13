@@ -1,15 +1,15 @@
 #!/usr/bin/python3
 """
-
+An interactive console
 """
 
 import cmd
 
-class HBNBCommand(cmd.Cmd):
-    """
 
-    """
+class HBNBCommand(cmd.Cmd):
+
     prompt = "(hbnb)"
+
     def do_quit(self, arg):
         """
         Quit command to exit the program
@@ -21,6 +21,7 @@ class HBNBCommand(cmd.Cmd):
         EOF command to exit the program
         """
         return True
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
