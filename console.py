@@ -16,13 +16,13 @@ class HBNBCommand(cmd.Cmd):
         """
         return True
 
-    def help_quit(self):
+    def help_quit(self, arg):
         """
         Quit command docs
         """
         print("Quit command to exit the program\n")
 
-    def do_EOF(self, line):
+    def do_EOF(self, arg):
         """
         EOF command to exit the program
         """
