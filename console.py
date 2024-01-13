@@ -8,7 +8,7 @@ import cmd
 
 class HBNBCommand(cmd.Cmd):
 
-    prompt = "(hbnb)"
+    prompt = "(hbnb) "
 
     def do_quit(self, arg):
         """
