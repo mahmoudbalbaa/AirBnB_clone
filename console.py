@@ -8,7 +8,13 @@ import cmd
 
 class HBNBCommand(cmd.Cmd):
 
-    prompt = "(hbnb)"
+    prompt = "(hbnb) "
+
+    def empty_line(self):
+        """
+        Do nothing when an empty line entered
+        """
+        pass
 
     def do_quit(self, arg):
         """
