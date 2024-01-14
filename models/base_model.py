@@ -13,7 +13,7 @@ class BaseModel:
     """
     Base Model
     """
-    
+
     def __init__(self, *args, **kwargs):
         """Initializes the instance's attributes."""
 
