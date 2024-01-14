@@ -10,9 +10,7 @@ import models
 
 
 class BaseModel:
-    """
-    Base Model
-    """
+    """Defines all common attributes/methods for other classes"""
 
     def __init__(self, *args, **kwargs):
         """Initializes the instance's attributes."""
@@ -34,16 +32,14 @@ class BaseModel:
             models.storage.new(self)
 
     def save(self):
-        """
-        this is save method
-        """
+        """this is save method that updates update_at"""
+
         self.updated_at = datetime.utcnow()
         models.storage.save()
 
     def to_dict(self):
-        """
-        this is to dict method
-        """
+        """Generate a new dict with an extra field __class__"""
+
         inst_dict = self.__dict__.copy()
         inst_dict["__class__"] = self.__class__.__name__
         inst_dict["created_at"] = self.created_at.isoformat()
@@ -52,8 +48,7 @@ class BaseModel:
         return inst_dict
 
     def __str__(self):
-        """
-        Returns a string representation of the instance.
-        """
+        """Returns a string representation of the instance."""
+
         class_name = self.__class__.__name__
         return "[{}] ({}) {}".format(class_name, self.id, self.__dict__)
