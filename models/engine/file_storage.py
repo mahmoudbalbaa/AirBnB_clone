@@ -13,6 +13,7 @@ from models.city import City
 from models.amenity import Amenity
 from models.review import Review
 
+
 class FileStorage:
     """
 
@@ -44,7 +45,7 @@ class FileStorage:
         for obj in all_objs.keys():
             obj_dict[obj] = all_objs[obj].to_dict()
 
-        with open(FileStorage.__file_path, "w",encoding="utf-8") as f:
+        with open(FileStorage.__file_path, "w", encoding="utf-8") as f:
             json.dump(obj_dict, f)
 
     def reload(self):
