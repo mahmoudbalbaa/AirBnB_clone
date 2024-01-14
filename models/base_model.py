@@ -10,22 +10,28 @@ import models
 
 
 class BaseModel:
+    """
+    Base Model
+    """
+    
     def __init__(self, *args, **kwargs):
+        """Initializes the instance's attributes."""
+
         time_format = "%Y-%m-%dT%H:%M:%S.%f"
-        self.id = str(uuid.uuid4())
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
-
         if kwargs:
-            for key, value in kwargs.items():
-                if key == "__class__":
-                    continue
-                elif key == "created_at" or key == "updated_at":
-                    setattr(self, key, datetime.strptime(value, time_format))
-                else:
-                    setattr(self, key, value)
-
-        models.storage.new(self)
+            # Remove the class name from kwargs if present
+            kwargs.pop("__class__", None)
+            # Convert datetime strings to objects
+            for key in ['created_at', 'updated_at']:
+                if key in kwargs:
+                    kwargs[key] = datetime.strptime(kwargs[key], time_format)
+            self.__dict__.update(kwargs)
+        else:
+            current_time = datetime.utcnow()
+            self.id = str(uuid.uuid4())
+            self.created_at = current_time
+            self.updated_at = current_time
+            models.storage.new(self)
 
     def save(self):
         """
@@ -42,6 +48,7 @@ class BaseModel:
         inst_dict["__class__"] = self.__class__.__name__
         inst_dict["created_at"] = self.created_at.isoformat()
         inst_dict["updated_at"] = self.updated_at.isoformat()
+
         return inst_dict
 
     def __str__(self):
