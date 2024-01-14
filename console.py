@@ -51,7 +51,7 @@ class HBNBCommand(cmd.Cmd):
         usage: create <class_name>
         """
         commands = shlex.split(arg)
-        
+
         if len(commands) == 0:
             print("** class name missing **")
         elif commands[0] not in self.valid_classes:
@@ -83,7 +83,7 @@ class HBNBCommand(cmd.Cmd):
                 print(objects[key])
             else:
                 print("** no instance found **")
-    
+
     def do_destroy(self, arg):
         """
         Deletes an instance based on the class name and id
@@ -114,7 +114,7 @@ class HBNBCommand(cmd.Cmd):
         """
         objects = storage.all()
         commands = shlex.split(arg)
-        
+
         if len(commands) == 0:
             for key, value in objects.items():
                 print(str(value))
@@ -161,6 +161,7 @@ class HBNBCommand(cmd.Cmd):
                 setattr(obj, attr_name, attr_value)
 
                 obj.save()
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
