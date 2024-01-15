@@ -62,7 +62,7 @@ class HBNBCommand(cmd.Cmd):
             new_instance = globals()[commands[0]]()
             storage.save()
             print(new_instance.id)
-    
+
     def do_show(self, arg):
         """
         Show the string representation of an instance.
@@ -110,7 +110,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, arg):
         """
-        Prints all string representations of instances based or not on the class name.
+        Prints all string representations of in ba or not on the class name.
         usage: all <class_name> or all
         """
         objects = storage.all()
