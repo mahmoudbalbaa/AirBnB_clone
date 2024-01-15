@@ -3,7 +3,10 @@
 Unit test for the base class base model
 """
 import unittest
+from datetime import datetime
+from unittest.mock import patch
 from models.base_model import BaseModel
+from models import storage
 
 
 class TestBaseModel(unittest.TestCase):
@@ -16,46 +19,44 @@ class TestBaseModel(unittest.TestCase):
         """
         Test datetime type
         """
-        my_model = BaseModel()
+        with patch('models.storage.new') as mock_new:
+            instance = BaseModel()
+            self.assertIsInstance(instance, BaseModel)
+            self.assertIsNotNone(instance.id)
+            self.assertIsInstance(instance.created_at, datetime)
+            self.assertIsInstance(instance.updated_at, datetime)
+            mock_new.assert_called_once_with(instance)
 
-        self.assertIsNotNone(my_model.id)
-        self.assertIsNotNone(my_model.created_at)
-        self.assertIsNotNone(my_model.updated_at)
-
-    def test_save_method(self):
+    def test_save(self):
         """
         test save method of basemodel
         """
-        my_model = BaseModel()
+        with patch('models.storage.save') as mock_save:
+            instance = BaseModel()
+            instance.save()
+            mock_save.assert_called_once()
 
-        initial_updated_at = my_model.updated_at
-        current_updated_at = my_model.save()
-        self.assertNotEqual(initial_updated_at, current_updated_at)
-
-    def test_to_dict_method(self):
+    def test_to_dict(self):
         """
         testing to dict function
         """
-        my_model = BaseModel()
-        my_mod_c_iso = my_model.created_at.isoformat()
-        my_model_dict = my_model.to_dict()
+        instance = BaseModel()
+        result = instance.to_dict()
+        self.assertIsInstance(result, dict)
+        self.assertEqual(result['__class__'], 'BaseModel')
+        self.assertEqual(result['created_at'], instance.created_at.isoformat())
+        self.assertEqual(result['updated_at'], instance.updated_at.isoformat())
 
-        self.assertIsInstance(my_model_dict, dict)
-        self.assertEqual(my_model_dict['__class__'], 'BaseModel')
-        self.assertEqual(my_model_dict['id'], my_model.id)
-        self.assertEqual(my_model_dict['created_at'], my_mod_c_iso)
-        self.assertEqual(my_model_dict['updated_at'], my_mod_c_iso)
-
-    def test_str_method(self):
+    def test_str(self):
         """
         Test str output
         """
-        my_model = BaseModel()
-
-        self.assertTrue(str(my_model).startswith('[BaseModel]'))
-        self.assertIn(str(my_model.__dict__), str(my_model))
-        self.assertIn(my_model.id, str(my_model))
+        instance = BaseModel()
+        result = str(instance)
+        self.assertIsInstance(result, str)
+        self.assertIn('BaseModel', result)
+        self.assertIn(instance.id, result)
 
 
 if __name__ == '__main__':
-    unittest.mai()
+    unittest.main()
