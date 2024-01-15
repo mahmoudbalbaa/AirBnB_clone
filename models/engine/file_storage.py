@@ -39,7 +39,8 @@ class FileStorage:
         """
         Serialize __objects to the JSON file (path: __file_path)
         """
-        obj_dict = {key: obj.to_dict() for key, obj in FileStorage.__objects.items()}
+        all_objs = FileStorage.__objects
+        obj_dict = {key: obj.to_dict() for key, obj in all_objs.items()}
         with open(FileStorage.__file_path, "w", encoding="utf-8") as f:
             json.dump(obj_dict, f)
 
@@ -60,7 +61,7 @@ class FileStorage:
                             instance = cls(**values)
                             FileStorage.__objects[key] = instance
                         else:
-                            print(f"Warning: Unknown class name '{class_name}' in file.")
+                            print(f"Warning: Unknown class name"
+                                  f"'{class_name}' in file.")
                 except Exception as e:
                     print(f"Error reloading: {e}")
-
