@@ -12,38 +12,43 @@ import models
 class BaseModel:
     """Defines all common attributes/methods for other classes"""
 
-    _time_format = "%Y-%m-%dT%H:%M:%S.%f"
-
     def __init__(self, *args, **kwargs):
         """Initializes the instance's attributes."""
+
+        time_format = "%Y-%m-%dT%H:%M:%S.%f"
         if kwargs:
+            # Remove the class name from kwargs if present
             kwargs.pop("__class__", None)
-            for key in ['_created_at', '_updated_at']:
+            # Convert datetime strings to objects
+            for key in ['created_at', 'updated_at']:
                 if key in kwargs:
-                    kwargs[key] = \
-                            datetime.strptime(kwargs[key], self._time_format)
+                    kwargs[key] = datetime.strptime(kwargs[key], time_format)
             self.__dict__.update(kwargs)
         else:
             current_time = datetime.utcnow()
-            self._id = str(uuid.uuid4())
-            self._created_at = current_time
-            self._updated_at = current_time
+            self.id = str(uuid.uuid4())
+            self.created_at = current_time
+            self.updated_at = current_time
             models.storage.new(self)
 
     def save(self):
-        """Updates the _updated_at attribute and saves to storage."""
-        self._updated_at = datetime.utcnow()
+        """this is save method that updates update_at"""
+
+        self.updated_at = datetime.utcnow()
         models.storage.save()
 
     def to_dict(self):
-        """Generate a new dict with an extra field __class__."""
+        """Generate a new dict with an extra field __class__"""
+
         inst_dict = self.__dict__.copy()
         inst_dict["__class__"] = self.__class__.__name__
-        inst_dict["_created_at"] = self._created_at.isoformat()
-        inst_dict["_updated_at"] = self._updated_at.isoformat()
+        inst_dict["created_at"] = self.created_at.isoformat()
+        inst_dict["updated_at"] = self.updated_at.isoformat()
+
         return inst_dict
 
     def __str__(self):
         """Returns a string representation of the instance."""
+
         class_name = self.__class__.__name__
-        return f"[{class_name}] ({self._id}) {self.short_summary()}"
+        return "[{}] ({}) {}".format(class_name, self.id, self.__dict__)
