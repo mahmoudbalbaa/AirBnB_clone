@@ -58,12 +58,12 @@ class FileStorage:
                     obj_dict = json.load(f)
 
                     for key, value in obj_dict.items():
-                        class_name, obj_id = key.spilt('.')
+                        class_name, obj_id = key.split('.')
 
                         cls = eval(class_name)
 
                         instance = cls(**values)
 
-                        Filestorage.__objects[key] = instance
+                        FileStorage.__objects[key] = instance
                 except Exception:
                     pass
