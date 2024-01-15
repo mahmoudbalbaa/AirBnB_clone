@@ -18,7 +18,8 @@ from models.review import Review
 class HBNBCommand(cmd.Cmd):
 
     prompt = "(hbnb) "
-    valid_classes = ["BaseModel", "User", "Place", "State", "City", "Amenity", "Review"]
+    valid_classes = \
+        ["BaseModel", "User", "Place", "State", "City", "Amenity", "Review"]
 
     def empty_line(self):
         """
