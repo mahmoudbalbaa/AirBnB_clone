@@ -63,7 +63,8 @@ class FileStorage:
                         if class_name in globals():
                             cls = globals()[class_name]
                         else:
-                            print(f"Warning: Unknown class name '{class_name}' in file.")
+                            print(f"Warning: Unknown class name "
+                                  f"'{class_name}' in file.")
                             continue
 
                         instance = cls(**values)
