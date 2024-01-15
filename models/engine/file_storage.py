@@ -60,7 +60,11 @@ class FileStorage:
                     for key, value in obj_dict.items():
                         class_name, obj_id = key.split('.')
 
-                        cls = eval(class_name)
+                        if class_name in globals():
+                            cls = globals()[class_name]
+                        else:
+                            print(f"Warning: Unknown class name '{class_name}' in file.")
+                            continue
 
                         instance = cls(**values)
 
