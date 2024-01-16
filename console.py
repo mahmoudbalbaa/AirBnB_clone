@@ -18,6 +18,8 @@ from json.decoder import JSONDecodeError
 
 
 class HBNBCommand(cmd.Cmd):
+    """
+    """
     prompt = "(hbnb) "
     valid_classes = [
             "BaseModel",
@@ -35,7 +37,7 @@ class HBNBCommand(cmd.Cmd):
         """
         return True
 
-    def do_help(self, arg):
+   def do_help(self, arg):
         """
         Quit command docs
         """
@@ -142,11 +144,8 @@ class HBNBCommand(cmd.Cmd):
     def default(self, line):
         if line is None:
             return
-        cmdPattern = r"^([A-Za-z]+)\.([a-z]+)\(([^(]*)\)"
-        paramsPattern = (
-            r"""^"([^"]+)"(?:,\s*(?:"([^"]+)"|(\{[^}]+\}))
-            (?:,\s*(?:("?[^"]+"?)))?)?"""
-            )
+        cmdPattern = "^([A-Za-z]+)\.([a-z]+)\(([^(]*)\)"
+        paramsPattern = """^"([^"]+)"(?:,\s*(?:"([^"]+)"|(\{[^}]+\}))(?:,\s*(?:("?[^"]+"?)))?)?"""
         m = re.match(cmdPattern, line)
         if not m:
             super().default(line)
