@@ -135,29 +135,37 @@ class HBNBCommand(cmd.Cmd):
                 if key.split('.')[0] == commands[0]:
                     print(str(value))
 
-    def default(self, arg):
-        """
-        Default behavior for cmd module for invalid syntax
-        """
-        arg_list = arg.split('.')
-        print(f"{arg_list = }"}
-        incomming_class_name = arg_list[0]
-        print(f"{incomming_class_name = }")
-        command = arg_list[1].split('(')
-        incomming_method = command[0]
-        print(f"{incomming_method = }")
-        method_dict = {
-                'all': self.do_all,
-                'show': self.do_show,
-                'destroy': self.do_destroy,
-                'update': self.do_update
-                }
+    def default(self, line):
+        if line is None:
+            return
 
-        if incomming_method in method_dict.key():
-            return method_dict[incomming_method]("{} {}".format(incomming_class_name, ''))
-        print("*** Unknown syntax: {}".format(arg))
-        return False
-        
+        cmdPattern = "^([A-Za-z]+)\.([a-z]+)\(([^(]*)\)"
+        paramsPattern = """^"([^"]+)"(?:,\s*(?:"([^"]+)"|(\{[^}]+\}))(?:,\s*(?:("?[^"]+"?)))?)?"""
+        m = re.match(cmdPattern, line)
+        if not m:
+            super().default(line)
+            return
+        mName, method, params = m.groups()
+        m = re.match(paramsPattern, params)
+        params = [item for item in m.groups() if item] if m else []
+
+        cmd = " ".join([mName] + params)
+
+        if method == 'all':
+            return self.do_all(cmd)
+
+        if method == 'count':
+            return self.do_count(cmd)
+
+        if method == 'show':
+            return self.do_show(cmd)
+
+        if method == 'destroy':
+            return self.do_destroy(cmd)
+
+        if method == 'update':
+            return self.do_update(cmd)
+
 
     def do_update(self, arg):
         """
