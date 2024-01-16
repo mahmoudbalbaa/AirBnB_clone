@@ -182,42 +182,36 @@ class HBNBCommand(cmd.Cmd):
         if method == 'update':
             return self.do_update(cmd)
 
-    def do_update(self, arg):
+    def do_update(self, line):
+        """Update a class instance of a given id by adding or updating
+        a given attribute key/value pair or dictionary.
+        usage:  update <class> <id> <attribute_name> <attribute_value> or
+                <class>.update(<id>, <attribute_name>, <attribute_value>) or
+                <class>.update(<id>, <dictionary>)
         """
-        Updates an instance based on the class
-        name and id by adding or updating an attribute.
-        usage: update <class name> <id> <attribute name> "<attribute value>"
-        """
-        commands = shlex.split(arg)
-
-        if not commands:
+        arr = line.split()
+        if len(arr) < 1:
             print("** class name missing **")
-        elif commands[0] not in self.valid_classes:
+            return
+        elif arr[0] not in class_home:
             print("** class doesn't exist **")
-        elif len(commands) < 2:
+            return
+        elif len(arr) < 2:
             print("** instance id missing **")
+            return
         else:
-            objects = storage.all()
-
-            key = "{}.{}".format(commands[0], commands[1])
-            if key not in objects:
+            new_str = f"{arr[0]}.{arr[1]}"
+            if new_str not in storage.all().keys():
                 print("** no instance found **")
-            elif len(commands) < 3:
+            elif len(arr) < 3:
                 print("** attribute name missing **")
-            elif len(commands) < 4:
+                return
+            elif len(arr) < 4:
                 print("** value missing **")
+                return
             else:
-                obj = objects[key]
-                attr_name = commands[2]
-                attr_value = commands[3]
-
-                try:
-                    attr_value = json.loads(attr_value)
-                except JSONDecodeError:
-                    pass
-
-                setattr(obj, attr_name, attr_value)
-                obj.save()
+                setattr(storage.all()[new_str], arr[2], arr[3])
+                storage.save()
 
 
 if __name__ == '__main__':
