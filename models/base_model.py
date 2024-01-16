@@ -6,7 +6,7 @@ serve as the base of our model.
 """
 import uuid
 from datetime import datetime
-from models import storage
+import models
 
 
 class BaseModel:
@@ -29,14 +29,13 @@ class BaseModel:
             self.id = str(uuid.uuid4())
             self.created_at = current_time
             self.updated_at = current_time
-            storage.new(self)
+            swlf.storage.new(self)
 
     def save(self):
         """this is save method that updates update_at"""
 
         self.updated_at = datetime.utcnow()
-        storage.save()
-        pass
+        self.storage.save()
 
     def to_dict(self):
         """Generate a new dict with an extra field __class__"""
