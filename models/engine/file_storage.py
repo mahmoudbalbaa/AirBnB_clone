@@ -1,67 +1,75 @@
 #!/usr/bin/python3
 """
-FileStorage module for storing and retrieving instances
+Module for file storage
 """
-
 import json
-import os
-from models.base_model import BaseModel
-from models.user import User
-from models.place import Place
-from models.state import State
-from models.city import City
-from models.amenity import Amenity
-from models.review import Review
+# from os.path import exists
 
 
 class FileStorage:
     """
-    FileStorage class for storing and retrieving instances
+    - Serializes instances to JSON
+    - Deserializes JSON to instances
     """
 
     __file_path = "file.json"
     __objects = {}
 
     def all(self):
-        """
-        Return the dictionary __objects
-        """
-        return FileStorage.__objects
+        """Returns dictionary of objects"""
+        return self.__objects
 
     def new(self, obj):
         """
-        Set in __objects the obj with key <obj class name>.id
+        Sets an object in __objects with key <obj_class>.id
         """
         key = "{}.{}".format(obj.__class__.__name__, obj.id)
-        FileStorage.__objects[key] = obj
+        self.__objects[key] = obj
 
     def save(self):
         """
-        Serialize __objects to the JSON file (path: __file_path)
+        Serializes __objects into JSON file (path __file_path)
         """
-        all_objs = FileStorage.__objects
-        obj_dict = {key: obj.to_dict() for key, obj in all_objs.items()}
-        with open(FileStorage.__file_path, "w", encoding="utf-8") as f:
-            json.dump(obj_dict, f)
+        obj_dict = {}
+        for key, obj in self.all().items():
+            obj_dict[key] = obj.to_dict()
+
+        with open(self.__file_path, "w", encoding="UTF-8") as text_file:
+            json.dump(obj_dict, text_file)
 
     def reload(self):
         """
-        Deserialize the JSON file to __objects, if the file exists
+        Deserializes the JSON file to __objects only if JSON file exists
+        Otherwise do nothing. If the file doesn't exist no exception should
+        be raised
         """
-        if os.path.isfile(FileStorage.__file_path):
-            with open(FileStorage.__file_path, "r", encoding="utf-8") as f:
-                try:
-                    obj_dict = json.load(f)
+        from models.base_model import BaseModel
+        from models.user import User
+        from models.amenity import Amenity
+        from models.city import City
+        from models.place import Place
+        from models.state import State
+        from models.review import Review
 
-                    for key, values in obj_dict.items():
-                        class_name, obj_id = key.split('.')
-                        cls = globals().get(class_name)
+        class_map = {
+                    'BaseModel': BaseModel,
+                    'User': User,
+                    'Amenity': Amenity,
+                    'City': City,
+                    'Place': Place,
+                    'State': State,
+                    'Review': Review,
+            }
 
-                        if cls:
-                            instance = cls(**values)
-                            FileStorage.__objects[key] = instance
-                        else:
-                            print(f"Warning: Unknown class name"
-                                  f"'{class_name}' in file.")
-                except Exception as e:
-                    print(f"Error reloading: {e}")
+        try:
+            with open(self.__file_path, "r", encoding="UTF-8") as text_file:
+                obj_dict = json.load(text_file)
+
+                for key, val in obj_dict.items():
+                    class_name = val['__class__']
+                    class_instance = class_map[class_name]
+                    instance = class_instance(**val)
+                    all_objects = self.all()
+                    all_objects[key] = instance
+        except FileNotFoundError:
+            pass
