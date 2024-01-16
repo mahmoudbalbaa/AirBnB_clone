@@ -18,8 +18,6 @@ from json.decoder import JSONDecodeError
 
 
 class HBNBCommand(cmd.Cmd):
-    """
-    """
     prompt = "(hbnb) "
     valid_classes = [
             "BaseModel",
@@ -37,7 +35,7 @@ class HBNBCommand(cmd.Cmd):
         """
         return True
 
-   def do_help(self, arg):
+    def do_help(self, arg):
         """
         Quit command docs
         """
