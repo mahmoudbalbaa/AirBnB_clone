@@ -156,8 +156,8 @@ class HBNBCommand(cmd.Cmd):
     def do_update(self, arg):
         """
         Updates an instance based on the class
-        name and id by adding or updating an attribute.
-        usage: update <class name> <id> <attribute name> "<attribute value>"
+        name and id using a dictionary representation.
+        usage: update <class name> <id> <dictionary representation>
         """
         commands = shlex.split(arg)
         if not commands:
@@ -172,18 +172,24 @@ class HBNBCommand(cmd.Cmd):
             if key not in objects:
                 print("** no instance found **")
             elif len(commands) < 3:
-                print("** attribute name missing **")
-            elif len(commands) < 4:
-                print("** value missing **")
+                print("** dictionary representation missing **")
             else:
                 obj = objects[key]
-                attr_name = commands[2]
-                attr_value = commands[3]
                 try:
-                    attr_value = json.loads(attr_value)
+                    # Convert the dictionary representation to a Python dictionary
+                    attr_dict = json.loads(commands[2])
                 except JSONDecodeError:
-                    pass
-                setattr(obj, attr_name, attr_value)
+                    print("** invalid dictionary representation **")
+                    return
+
+                # Update instance attributes based on the dictionary
+                for key, value in attr_dict.items():
+                    setattr(obj, key, value)
+
+                # Save the updated instance
                 obj.save()
+                print(obj)
+
+
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
