@@ -3,6 +3,7 @@
 An interactive console
 """
 
+import re
 import json
 import cmd
 import shlex
@@ -49,22 +50,11 @@ class HBNBCommand(cmd.Cmd):
         print()
         return True
 
-    def empty_line(self):
+    def emptyline(self):
         """
         Do nothing when an empty line is entered
         """
         pass
-
-    def onecmd(self, line):
-        """
-        Specify the command you want to handle
-        """
-        specific_command = 'help'
-
-        if line.strip() == specific_command:
-            getattr(self, 'do_' + specific_command)('')
-        else:
-            super().onecmd(line)
 
     def do_create(self, arg):
         """
