@@ -23,14 +23,14 @@ class HBNBCommand(cmd.Cmd):
 
     prompt = "(hbnb) "
     valid_classes = [
-        "BaseModel",
-        "User",
-        "Place",
-        "State",
-        "City",
-        "Amenity",
-        "Review"
-    ]
+            "BaseModel",
+            "User",
+            "Place",
+            "State",
+            "City",
+            "Amenity",
+            "Review"
+            ]
 
     def do_quit(self, arg):
         """
@@ -128,8 +128,7 @@ class HBNBCommand(cmd.Cmd):
 
         if not commands:
             for key, value in objects.items():
-                print(value)
-        else:
+
             key = "{}.{}".format(commands[0], commands[1])
             if key not in objects:
                 print("** no instance found **")
@@ -146,14 +145,15 @@ class HBNBCommand(cmd.Cmd):
                     arg_dict = ast.literal_eval("{" + str_data + "}")
                     attribute_names = list(arg_dict.keys())
                     attribute_values = list(arg_dict.values())
-                    attr_name1 = attribute_names[0]
-                    attr_value1 = attribute_values[0]
-                    attr_name2 = attribute_names[1]
-                    attr_value2 = attribute_values[1]
+                    attr_name1 = attributes_names[0]
+                    attr_value1 = attributes_values[0]
+                    attr_name2 = attributes_names[1]
+                    attr_value2 = attributes_values[1]
 
                     setattr(obj, attr_name1, attr_value1)
                     setattr(obj, attr_name2, attr_value2)
                 else:
+
                     attr_name = commands[2]
                     attr_value = commands[3]
 
@@ -181,20 +181,23 @@ class HBNBCommand(cmd.Cmd):
         m = re.match(paramsPattern, params)
         params = [item for item in m.groups() if item] if m else []
 
+        cmd = " ".join([mName] + params)
+
         if method == 'all':
-            return self.do_all(line)
+            return self.do_all(cmd)
 
         if method == 'count':
-            return self.do_count(line)
+            return self.do_count(cmd)
 
         if method == 'show':
-            return self.do_show(line)
+            return self.do_show(cmd)
 
         if method == 'destroy':
-            return self.do_destroy(line)
+            return self.do_destroy(cmd)
 
         if method == 'update':
-            return self.do_update(line)
+            return self.do_update(cmd)
+
 
 
 if __name__ == '__main__':
