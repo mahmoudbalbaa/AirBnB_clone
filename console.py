@@ -135,6 +135,30 @@ class HBNBCommand(cmd.Cmd):
                 if key.split('.')[0] == commands[0]:
                     print(str(value))
 
+    def default(self, arg):
+        """
+        Default behavior for cmd module for invalid syntax
+        """
+        arg_list = arg.split('.')
+        print(f"{arg_list = }"}
+        incomming_class_name = arg_list[0]
+        print(f"{incomming_class_name = }")
+        command = arg_list[1].split('(')
+        incomming_method = command[0]
+        print(f"{incomming_method = }")
+        method_dict = {
+                'all': self.do_all,
+                'show': self.do_show,
+                'destroy': self.do_destroy,
+                'update': self.do_update
+                }
+
+        if incomming_method in method_dict.key():
+            return method_dict[incomming_method]("{} {}".format(incomming_class_name, ''))
+        print("*** Unknown syntax: {}".format(arg))
+        return False
+        
+
     def do_update(self, arg):
         """
         Updates an instance based on the class
