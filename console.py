@@ -20,7 +20,15 @@ from json.decoder import JSONDecodeError
 class HBNBCommand(cmd.Cmd):
 
     prompt = "(hbnb) "
-    valid_classes = ["BaseModel", "User", "Place", "State", "City", "Amenity", "Review"]
+    valid_classes = [
+            "BaseModel",
+            "User",
+            "Place",
+            "State",
+            "City",
+            "Amenity",
+            "Review"
+            ]
 
     def empty_line(self):
         """
