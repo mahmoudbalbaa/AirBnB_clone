@@ -7,6 +7,7 @@ import re
 import json
 import cmd
 import shlex
+import ast
 from models.base_model import BaseModel
 from models import storage
 from models.user import User
@@ -148,6 +149,9 @@ class HBNBCommand(cmd.Cmd):
         print(count)
 
     def default(self, line):
+        """
+        default behavior for cmd module when input is invalid
+        """
         if line is None:
             return
 
@@ -178,7 +182,6 @@ class HBNBCommand(cmd.Cmd):
         if method == 'update':
             return self.do_update(cmd)
 
-
     def do_update(self, arg):
         """
         Updates an instance based on the class
@@ -205,7 +208,6 @@ class HBNBCommand(cmd.Cmd):
                 print("** value missing **")
             else:
                 obj = objects[key]
-
                 attr_name = commands[2]
                 attr_value = commands[3]
 
@@ -213,8 +215,8 @@ class HBNBCommand(cmd.Cmd):
                     attr_value = json.loads(attr_value)
                 except JSONDecodeError:
                     pass
-                setattr(obj, attr_name, attr_value)
 
+                setattr(obj, attr_name, attr_value)
                 obj.save()
 
 
