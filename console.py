@@ -15,6 +15,8 @@ from models.city import City
 from models.amenity import Amenity
 from models.review import Review
 from json.decoder import JSONDecodeError
+
+
 class HBNBCommand(cmd.Cmd):
     prompt = "(hbnb) "
     valid_classes = [
@@ -26,27 +28,32 @@ class HBNBCommand(cmd.Cmd):
             "Amenity",
             "Review"
             ]
+
     def do_quit(self, arg):
         """
         Quit command to exit the program
         """
         return True
+
     def do_help(self, arg):
         """
         Quit command docs
         """
         cmd.Cmd.do_help(self, arg)
+
     def do_EOF(self, arg):
         """
         EOF command to exit the program
         """
         print()
         return True
+
     def emptyline(self):
         """
         Do nothing when an empty line is entered
         """
         pass
+
     def do_create(self, arg):
         """
         Create a new instance of BaseModel and save it to a JSON file.
@@ -61,6 +68,7 @@ class HBNBCommand(cmd.Cmd):
             new_instance = globals()[commands[0]]()
             storage.save()
             print(new_instance.id)
+
     def do_show(self, arg):
         """
         Show the string representation of an instance.
@@ -80,6 +88,7 @@ class HBNBCommand(cmd.Cmd):
                 print(objects[key])
             else:
                 print("** no instance found **")
+
     def do_destroy(self, arg):
         """
         Deletes an instance based on the class name and id.
@@ -100,6 +109,7 @@ class HBNBCommand(cmd.Cmd):
                 storage.save()
             else:
                 print("** no instance found **")
+
     def do_all(self, arg):
         """
         Prints all string representations of in ba or not on the class name.
@@ -132,8 +142,11 @@ class HBNBCommand(cmd.Cmd):
     def default(self, line):
         if line is None:
             return
-        cmdPattern = "^([A-Za-z]+)\.([a-z]+)\(([^(]*)\)"
-        paramsPattern = """^"([^"]+)"(?:,\s*(?:"([^"]+)"|(\{[^}]+\}))(?:,\s*(?:("?[^"]+"?)))?)?"""
+        cmdPattern = r"^([A-Za-z]+)\.([a-z]+)\(([^(]*)\)"
+        paramsPattern = (
+            r"""^"([^"]+)"(?:,\s*(?:"([^"]+)"|(\{[^}]+\}))
+            (?:,\s*(?:("?[^"]+"?)))?)?"""
+            )
         m = re.match(cmdPattern, line)
         if not m:
             super().default(line)
@@ -185,6 +198,7 @@ class HBNBCommand(cmd.Cmd):
                     pass
                 setattr(obj, attr_name, attr_value)
                 obj.save()
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
