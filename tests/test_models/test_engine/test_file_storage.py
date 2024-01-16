@@ -1,90 +1,115 @@
 #!/usr/bin/python3
-""" Module of Unittests """
+"""
+This is the test case for the file storage class
+"""
 import unittest
-from models.base_model import BaseModel
-from models.engine.file_storage import FileStorage
-from models import storage
 import os
-import json
+from models.engine.file_storage import FileStorage
+from models.base_model import BaseModel
+from models.user import User
 
 
-class FileStorageTests(unittest.TestCase):
-    """ Suite of File Storage Tests """
+class TestFileStorage(unittest.TestCase):
+    """
+    The class to test the storage of the project
+    """
 
-    my_model = BaseModel()
+    def setUp(self):
+        """
+        Set's up a clean state for each test
+        """
+        self.file_path = "test_file.json"
+        self.storage = FileStorage()
+        self.storage.__class__.__file_path = self.file_path
 
-    def testClassInstance(self):
-        """ Check instance """
-        self.assertIsInstance(storage, FileStorage)
+    def tearDown(self):
+        """
+        Clean after each test
+        """
+        if os.path.exists(self.file_path):
+            os.remove(self.file_path)
 
-    def testStoreBaseModel(self):
-        """ Test save and reload functions """
-        self.my_model.full_name = "BaseModel Instance"
-        self.my_model.save()
-        bm_dict = self.my_model.to_dict()
-        all_objs = storage.all()
+    def test_file_path_default_value(self):
+        """
+        Test if default value of file path is correct
+        """
+        self.assertEqual(FileStorage.__file_path, "file.json")
 
-        key = bm_dict['__class__'] + "." + bm_dict['id']
-        self.assertEqual(key in all_objs, True)
+    def test_file_path_custom_value(self):
+        """
+        Test if custom value of file path is set correctly
+        """
+        self.assertEqual(self.storage.__class__.__file_path, self.file_path)
 
-    def testStoreBaseModel2(self):
-        """ Test save, reload and update functions """
-        self.my_model.my_name = "First name"
-        self.my_model.save()
-        bm_dict = self.my_model.to_dict()
-        all_objs = storage.all()
+    def test_objects_default_empty_dict(self):
+        """
+        Test if __objects is an empty dictionary by default
+        """
+        self.assertEqual(self.storage.__class__.__objects, {})
 
-        key = bm_dict['__class__'] + "." + bm_dict['id']
+    def test_all_method_empty_storage(self):
+        """
+        Test the all() method when storage is empty
+        """
+        self.assertEqual(self.storage.all(), {})
 
-        self.assertEqual(key in all_objs, True)
-        self.assertEqual(bm_dict['my_name'], "First name")
+    def test_all_method_with_objects(self):
+        """
+        Test the all() method when storage has objects
+        """
+        obj = BaseModel()
+        self.storage.new(obj)
+        key = f"{obj.__class__.__name__}.{obj.id}"
+        self.assertEqual(self.storage.all(), {key: obj})
 
-        create1 = bm_dict['created_at']
-        update1 = bm_dict['updated_at']
+    def test_new_method(self):
+        """
+        Test the new() method to ensure it adds an object to __objects
+        """
+        obj = BaseModel()
+        self.storage.new(obj)
 
-        self.my_model.my_name = "Second name"
-        self.my_model.save()
-        bm_dict = self.my_model.to_dict()
-        all_objs = storage.all()
+        key = f"{obj.__class__.__name__}.{obj.id}"
+        self.assertIn(key, self.storage.all())
+        self.assertEqual(self.storage.all()[key], obj)
 
-        self.assertEqual(key in all_objs, True)
+    def test_save_method(self):
+        """
+        Tests the save() method to ensure it writes to the correct file
+        """
+        obj = BaseModel()
+        self.storage.new(obj)
+        self.storage.save()
+        self.assertTrue(os.path.exists(self.file_path))
 
-        create2 = bm_dict['created_at']
-        update2 = bm_dict['updated_at']
+        with open(self.file_path, "r", encoding="UTF -8") as text_file:
+            data = json.load(text_file)
+            key = f"{obj.__class__.__name__}.{obj.id}"
+            self.assertIn(key, data)
+            self.assertEqual(data[key], obj.to_dict())
 
-        self.assertEqual(create1, create2)
-        self.assertNotEqual(update1, update2)
-        self.assertEqual(bm_dict['my_name'], "Second name")
+    def test_reload_method_empty_file(self):
+        """
+        Test the reload method when file is empty
+        """
+        self.storage.reload()
+        self.assertEqual(self.storage.all(), {})
 
-    def testHasAttributes(self):
-        """verify if attributes exist"""
-        self.assertEqual(hasattr(FileStorage, '_FileStorage__file_path'), True)
-        self.assertEqual(hasattr(FileStorage, '_FileStorage__objects'), True)
+    def test_reload_method_with_data(self):
+        """
+        Tests the reload method when the file has data
+        """
+        obj = User()
+        self.storage.new(obj)
+        self.storage.save()
 
-    def testsave(self):
-        """verify if JSON exists"""
-        self.my_model.save()
-        self.assertEqual(os.path.exists(storage._FileStorage__file_path), True)
-        self.assertEqual(storage.all(), storage._FileStorage__objects)
+        new_storage = FileStorage()
+        new_storage.__class__.__file_path = self.file_path
+        new_storage.reload()
 
-    def testreload(self):
-        """test if reload """
-        self.my_model.save()
-        self.assertEqual(os.path.exists(storage._FileStorage__file_path), True)
-        dobj = storage.all()
-        FileStorage._FileStorage__objects = {}
-        self.assertNotEqual(dobj, FileStorage._FileStorage__objects)
-        storage.reload()
-        for key, value in storage.all().items():
-            self.assertEqual(dobj[key].to_dict(), value.to_dict())
-
-    def testSaveSelf(self):
-        """ Check save self """
-        msg = "save() takes 1 positional argument but 2 were given"
-        with self.assertRaises(TypeError) as e:
-            FileStorage.save(self, 100)
-
-        self.assertEqual(str(e.exception), msg)
+        key = f"{obj.__class__.__name__}.{obj.id}"
+        self.assertIn(key, new_storage.all())
+        self.assertEqual(new_storage.all()[key], obj)
 
 
 if __name__ == '__main__':
