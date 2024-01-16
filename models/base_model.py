@@ -29,13 +29,13 @@ class BaseModel:
             self.id = str(uuid.uuid4())
             self.created_at = current_time
             self.updated_at = current_time
-            swlf.storage.new(self)
+            models.storage.new(self)
 
     def save(self):
         """this is save method that updates update_at"""
 
         self.updated_at = datetime.utcnow()
-        self.storage.save()
+        models.storage.save()
         pass
 
     def to_dict(self):
