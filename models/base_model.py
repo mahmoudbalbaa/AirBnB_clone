@@ -36,6 +36,7 @@ class BaseModel:
 
         self.updated_at = datetime.utcnow()
         storage.save()
+        pass
 
     def to_dict(self):
         """Generate a new dict with an extra field __class__"""
