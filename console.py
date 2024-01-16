@@ -30,23 +30,17 @@ class HBNBCommand(cmd.Cmd):
             "Review"
             ]
 
-    def empty_line(self):
-        """
-        Do nothing when an empty line is entered
-        """
-        pass
-
     def do_quit(self, arg):
         """
         Quit command to exit the program
         """
         return True
 
-    def help_quit(self):
+    def do_help(self, arg):
         """
         Quit command docs
         """
-        print("Quit command to exit the program\n")
+        cmd.Cmd.do_help(self, arg)
 
     def do_EOF(self, arg):
         """
@@ -54,6 +48,23 @@ class HBNBCommand(cmd.Cmd):
         """
         print()
         return True
+
+    def empty_line(self):
+        """
+        Do nothing when an empty line is entered
+        """
+        pass
+
+    def onecmd(self, line):
+        """
+        Specify the command you want to handle
+        """
+        specific_command = 'help'
+
+        if line.strip() == specific_command:
+            getattr(self, 'do_' + specific_command)('')
+        else:
+            super().onecmd(line)
 
     def do_create(self, arg):
         """
