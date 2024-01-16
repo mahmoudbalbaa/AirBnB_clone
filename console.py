@@ -182,36 +182,58 @@ class HBNBCommand(cmd.Cmd):
         if method == 'update':
             return self.do_update(cmd)
 
-    def do_update(self, line):
-        """Update a class instance of a given id by adding or updating
-        a given attribute key/value pair or dictionary.
-        usage:  update <class> <id> <attribute_name> <attribute_value> or
-                <class>.update(<id>, <attribute_name>, <attribute_value>) or
-                <class>.update(<id>, <dictionary>)
+    def do_update(self, arg):
         """
-        arr = line.split()
-        if len(arr) < 1:
+        Updates an instance based on the class
+        name and id by adding or updating an attribute.
+        usage: update <class name> <id> <attribute name> "<attribute value>"
+        """
+        commands = shlex.split(arg)
+
+        if not commands:
             print("** class name missing **")
-            return
-        elif arr[0] not in class_home:
+        elif commands[0] not in self.valid_classes:
             print("** class doesn't exist **")
-            return
-        elif len(arr) < 2:
+        elif len(commands) < 2:
             print("** instance id missing **")
-            return
         else:
-            new_str = f"{arr[0]}.{arr[1]}"
-            if new_str not in storage.all().keys():
+            objects = storage.all()
+
+            key = "{}.{}".format(commands[0], commands[1])
+            if key not in objects:
                 print("** no instance found **")
-            elif len(arr) < 3:
+            elif len(commands) < 3:
                 print("** attribute name missing **")
-                return
-            elif len(arr) < 4:
+            elif len(commands) < 4:
                 print("** value missing **")
-                return
             else:
-                setattr(storage.all()[new_str], arr[2], arr[3])
-                storage.save()
+                obj = objects[key]
+                curly_braces = re.search(r"\{(.*?)\}", arg)
+
+                if curly_braces:
+                    str_data = curly_braces.group(1)
+                    arg_dict = ast.literal_eval("{" + str_data + "}")
+                    attribute_names = list(arg_dict.keys())
+                    attribute_values = list(arg_dict.values())
+                    attr_name1 = attributes_names[0]
+                    attr_value1 = attributes_values[0]
+                    attr_name2 = attributes_names[1]
+                    attr_value2 = attributes_values[1]
+
+                    setattr(obj, attr_name1, attr_value1)
+                    setattr(obj, attr_name2, attr_value2)
+                else:
+
+                    attr_name = commands[2]
+                    attr_value = commands[3]
+
+                    try:
+                        attr_value = json.loads(attr_value)
+                    except JSONDecodeError:
+                        pass
+                    setattr(obj, attr_name, attr_value)
+
+                obj.save()
 
 
 if __name__ == '__main__':
